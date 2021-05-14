@@ -1,0 +1,21 @@
+{
+  "name": "phosphorus-server",
+  "version": "1.0.0",
+  "description": "A server for FS network",
+  "main": "index.ts",
+  "repository": "https://github.com/sparrowhe/phosphorus-server",
+  "author": "SparrowHe",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "start": "tsc && node main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "typescript-log": "^2.0.0"
+  }
+}
