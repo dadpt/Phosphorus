@@ -36,7 +36,7 @@ class clientHander {
             }
         })
     }
-    handeraa(text: string) {
+    async handeraa(text: string) {
         let regex = /^...(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*)/gm;
         let arr = regex.exec(text);
         // console.log(arr);
@@ -46,11 +46,11 @@ class clientHander {
             let cid = arr[4];
             let password = arr[5];
             let reqlevel = arr[6];
-            console.log(auth.auth(cid, password, reqlevel));
-            if(auth.auth(cid, password, reqlevel)) {
+            let result = await auth.auth(callsign, cid, password, reqlevel);
+            if(result == 0) {
                 this.send(`#TMserver:${callsign}:Connected to Phosphorus Server\r\n$CQSERVER:${callsign}:CAPS\r\n$CRSERVER:${callsign}:ATC:Y:${callsign}\r\n$CRSERVER:${callsign}:CAPS:ATCINFO=1:SECPOS=1\r\n$CRSERVER:${callsign}:IP:${this.socket.remoteAddress}`);
             } else {
-                this.senderr(errors.ERR_CIDINVALID, "");
+                this.senderr(result, "");
                 this.socket.end();
             }
         }

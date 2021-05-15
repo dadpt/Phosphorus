@@ -10,12 +10,14 @@ export default {
     port: 6809,
     mysql: {
         host: 'localhost',
-        user: 'root',
-        password: 'rppt123',
+        user: 'phosphorus',
+        port: 3306,
+        password: 'phosphorus',
         database: 'phosphorus'
     },
     api: {
         avt7Api: "http://www.avt7.com/Home/AirportMetarInfo?airport4Code="
     },
-    logger: logsToConsoleLogger
+    logger: logsToConsoleLogger,
+    databaseConnection: null
 }
