@@ -2,7 +2,8 @@ import net from 'net'
 import auth from '../auth/auth'
 import client from '../classes/client'
 import error from '../define/errors'
-
+import metar from '../utils/metar'
+import config from '../config/config'
 const errors = new error.Errors;
 
 class clientHander {
@@ -14,6 +15,8 @@ class clientHander {
         this.socket = socket;
     }
     send(text: string) {
+        //console.log(text);
+        config.logger.debug(`Send ${text}`);
         this.socket.write(`${text}\r\n`);
     }
     senderr(errnum: number, env: string) {
@@ -23,19 +26,20 @@ class clientHander {
     }
     hander() {
         this.socket.on('data', (data: Buffer)=>{
-            console.log(data.toString())
-            let strData = data.toString().split('\r\n');
-            for (let i in strData){
-                if (strData[i].startsWith("#AA")) {
-                    this.handeraa(strData[i]);
-                }
+            let strData = data.toString();
+            config.logger.debug(`Recive ${strData}`);
+            if (strData.startsWith("#AA")) {
+                this.handeraa(strData);
+            }
+            if(strData.startsWith("$AX")) {
+                this.handerax(strData)
             }
         })
     }
     handeraa(text: string) {
         let regex = /^...(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*)/gm;
         let arr = regex.exec(text);
-        console.log(arr);
+        // console.log(arr);
         if (arr!==null){
             let callsign = arr[1];
             let realname = arr[3];
@@ -44,11 +48,20 @@ class clientHander {
             let reqlevel = arr[6];
             console.log(auth.auth(cid, password, reqlevel));
             if(auth.auth(cid, password, reqlevel)) {
-                this.send("#TMserver:PRC_FSS:Connected to Phosphorus Server");
+                this.send(`#TMserver:${callsign}:Connected to Phosphorus Server\r\n$CQSERVER:${callsign}:CAPS\r\n$CRSERVER:${callsign}:ATC:Y:${callsign}\r\n$CRSERVER:${callsign}:CAPS:ATCINFO=1:SECPOS=1\r\n$CRSERVER:${callsign}:IP:${this.socket.remoteAddress}`);
             } else {
                 this.senderr(errors.ERR_CIDINVALID, "");
                 this.socket.end();
             }
+        }
+    }
+    async handerax(text: string) {
+        let regex = /^...(.*?):(.*?):(.*?):(.*)/gm;
+        let arr = regex.exec(text);
+        // console.log(arr)
+        if(arr!==null) {
+            let metarMessage = await metar.getMetarByIcao(arr[4].toUpperCase());
+            this.send(`$ARserver:${arr[1]}:METAR:${metarMessage.replace("METAR ","").replace("SPECI ", "")}`);
         }
     }
     

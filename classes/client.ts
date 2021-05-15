@@ -68,8 +68,8 @@ class Pilot{
     public sector: any;
     public rating: number;
     public visualrange: number;
-    public plan: FlightPlan | undefined
-    public constructor (position: Position, cid: string, location: string | undefined, type: string, callsign: string, st: string, real: string, time: number, rev: number, reqrating: number, visualrange: number){
+    public plan: FlightPlan | undefined;
+    public constructor (cid: string, location: string | undefined, type: string, callsign: string, st: string, real: string, time: number, rev: number, reqrating: number, visualrange: number){
         this.location=location;
         this.cid=cid.toString();
         this.type=type;
@@ -79,14 +79,13 @@ class Pilot{
         this.identflag=false;
         this.facilitytype=0;
         this.rating=reqrating;
-        this.visualrange=40;
         this.plan=undefined;
-        this.position=position
+        this.position=new Position(0,0,0,0,0);
         this.simtype=st;
         this.realname=real;
         this.starttime=time;
         this.frequency=0;
-        this.visualrange=visualrange;
+        this.visualrange=40;
     }
     updatepilot(fsdpackage: any): void {
         let a,b,c;
