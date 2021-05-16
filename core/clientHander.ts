@@ -1,5 +1,5 @@
 import net from 'net';
-import crypto from 'crypto'
+import crypto from 'crypto';
 import auth from '../auth/auth';
 import client from '../classes/client';
 import error from '../define/errors';
@@ -56,8 +56,8 @@ class ClientHander {
         const cid = arr[4];
         const password = arr[5];
         const reqlevel = arr[6];
-        const hash_password = crypto.createHash('md5').update(password).digest("hex")
-        const result = await auth.auth(callsign, cid, hash_password, reqlevel);
+        const hashPassword = crypto.createHash('md5').update(password).digest('hex');
+        const result = await auth.auth(callsign, cid, hashPassword, reqlevel);
         if (result === 0) {
           this.send(`#TMserver:${callsign}:Connected to Phosphorus Server\r\n$CQSERVER:${callsign}:CAPS\r\n$CRSERVER:${callsign}:ATC:Y:${callsign}\r\n$CRSERVER:${callsign}:CAPS:ATCINFO=1:SECPOS=1\r\n$CRSERVER:${callsign}:IP:${this.socket.remoteAddress}`);
         } else {
